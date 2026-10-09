@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.RecoveryMapper">
+    
+    <resultMap type="Recovery" id="RecoveryResult">
+        <result property="recoveryId"    column="recovery_id"    />
+        <result property="patientId"    column="patient_id"    />
+        <result property="patientName"    column="patient_name"    />
+        <result property="date"    column="date"    />
+        <result property="ntProbnp"    column="NT_proBNP"    />
+        <result property="LVEF"    column="LVEF"    />
+        <result property="CPET1"    column="CPET1"    />
+        <result property="CPET2"    column="CPET2"    />
+        <result property="peakBloodPressure"    column="peak_blood_pressure"    />
+        <result property="peakHeartRate"    column="peak_heart_rate"    />
+        <result property="anaerobicThresholdBloodPressure"    column="anaerobic_threshold_blood_pressure"    />
+        <result property="anaerobicThresholdHeartRate"    column="anaerobic_threshold_heart_rate"    />
+    </resultMap>
+
+    <sql id="selectRecoveryVo">
+        select recovery_id, patient_id, patient_name, date, NT_proBNP, LVEF, CPET1, CPET2, peak_blood_pressure, peak_heart_rate, anaerobic_threshold_blood_pressure, anaerobic_threshold_heart_rate from recovery
+    </sql>
+
+    <select id="selectRecoveryList" parameterType="Recovery" resultMap="RecoveryResult">
+        <include refid="selectRecoveryVo"/>
+        <where>  
+            <if test="patientId != null "> and patient_id = #{patientId}</if>
+            <if test="patientName != null  and patientName != ''"> and patient_name like concat('%', #{patientName}, '%')</if>
+            <if test="date != null "> and date = #{date}</if>
+            <if test="ntProbnp != null "> and NT_proBNP = #{ntProbnp}</if>
+            <if test="LVEF != null "> and LVEF = #{LVEF}</if>
+            <if test="CPET1 != null "> and CPET1 = #{CPET1}</if>
+            <if test="CPET2 != null "> and CPET2 = #{CPET2}</if>
+            <if test="peakBloodPressure != null "> and peak_blood_pressure = #{peakBloodPressure}</if>
+            <if test="peakHeartRate != null "> and peak_heart_rate = #{peakHeartRate}</if>
+            <if test="anaerobicThresholdBloodPressure != null "> and anaerobic_threshold_blood_pressure = #{anaerobicThresholdBloodPressure}</if>
+            <if test="anaerobicThresholdHeartRate != null "> and anaerobic_threshold_heart_rate = #{anaerobicThresholdHeartRate}</if>
+        </where>
+        ORDER BY date DESC
+    </select>
+    
+    <select id="selectRecoveryByRecoveryId" parameterType="Long" resultMap="RecoveryResult">
+        <include refid="selectRecoveryVo"/>
+        where recovery_id = #{recoveryId}
+        ORDER BY date DESC
+    </select>
+        
+    <insert id="insertRecovery" parameterType="Recovery" useGeneratedKeys="true" keyProperty="recoveryId">
+        insert into recovery
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="patientId != null">patient_id,</if>
+            <if test="patientName != null">patient_name,</if>
+            <if test="date != null">date,</if>
+            <if test="ntProbnp != null">NT_proBNP,</if>
+            <if test="LVEF != null">LVEF,</if>
+            <if test="CPET1 != null">CPET1,</if>
+            <if test="CPET2 != null">CPET2,</if>
+            <if test="peakBloodPressure != null">peak_blood_pressure,</if>
+            <if test="peakHeartRate != null">peak_heart_rate,</if>
+            <if test="anaerobicThresholdBloodPressure != null">anaerobic_threshold_blood_pressure,</if>
+            <if test="anaerobicThresholdHeartRate != null">anaerobic_threshold_heart_rate,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="patientId != null">#{patientId},</if>
+            <if test="patientName != null">#{patientName},</if>
+            <if test="date != null">#{date},</if>
+            <if test="ntProbnp != null">#{ntProbnp},</if>
+            <if test="LVEF != null">#{LVEF},</if>
+            <if test="CPET1 != null">#{CPET1},</if>
+            <if test="CPET2 != null">#{CPET2},</if>
+            <if test="peakBloodPressure != null">#{peakBloodPressure},</if>
+            <if test="peakHeartRate != null">#{peakHeartRate},</if>
+            <if test="anaerobicThresholdBloodPressure != null">#{anaerobicThresholdBloodPressure},</if>
+            <if test="anaerobicThresholdHeartRate != null">#{anaerobicThresholdHeartRate},</if>
+         </trim>
+    </insert>
+
+    <update id="updateRecovery" parameterType="Recovery">
+        update recovery
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="patientId != null">patient_id = #{patientId},</if>
+            <if test="patientName != null">patient_name = #{patientName},</if>
+            <if test="date != null">date = #{date},</if>
+            <if test="ntProbnp != null">NT_proBNP = #{ntProbnp},</if>
+            <if test="LVEF != null">LVEF = #{LVEF},</if>
+            <if test="CPET1 != null">CPET1 = #{CPET1},</if>
+            <if test="CPET2 != null">CPET2 = #{CPET2},</if>
+            <if test="peakBloodPressure != null">peak_blood_pressure = #{peakBloodPressure},</if>
+            <if test="peakHeartRate != null">peak_heart_rate = #{peakHeartRate},</if>
+            <if test="anaerobicThresholdBloodPressure != null">anaerobic_threshold_blood_pressure = #{anaerobicThresholdBloodPressure},</if>
+            <if test="anaerobicThresholdHeartRate != null">anaerobic_threshold_heart_rate = #{anaerobicThresholdHeartRate},</if>
+        </trim>
+        where recovery_id = #{recoveryId}
+    </update>
+
+    <delete id="deleteRecoveryByRecoveryId" parameterType="Long">
+        delete from recovery where recovery_id = #{recoveryId}
+    </delete>
+
+    <delete id="deleteRecoveryByRecoveryIds" parameterType="String">
+        delete from recovery where recovery_id in 
+        <foreach item="recoveryId" collection="array" open="(" separator="," close=")">
+            #{recoveryId}
+        </foreach>
+    </delete>
+</mapper>

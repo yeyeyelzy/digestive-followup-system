@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.ChatMapper">
+    
+    <resultMap type="Chat" id="ChatResult">
+        <result property="id"    column="id"    />
+        <result property="patientId"    column="patient_id"    />
+        <result property="patientName"    column="patient_name"    />
+        <result property="doctorId"    column="doctor_id"    />
+        <result property="doctorName"    column="doctor_name"    />
+        <result property="content"    column="content"    />
+        <result property="time"    column="time"    />
+        <result property="direction"    column="direction"    />
+    </resultMap>
+
+    <sql id="selectChatVo">
+        select id, patient_id, patient_name, doctor_id, doctor_name, content, time, direction
+        from chat
+    </sql>
+
+<!--    <select id="selectChatList" parameterType="Chat" resultMap="ChatResult">-->
+<!--        <include refid="selectChatVo"/>-->
+<!--        <where>  -->
+<!--            <if test="patientId != null "> and patient_id = #{patientId}</if>-->
+<!--            <if test="patientName != null  and patientName != ''"> and patient_name like concat('%', #{patientName}, '%')</if>-->
+<!--            <if test="doctorId != null "> and doctor_id = #{doctorId}</if>-->
+<!--            <if test="doctorName != null  and doctorName != ''"> and doctor_name like concat('%', #{doctorName}, '%')</if>-->
+<!--            <if test="content != null  and content != ''"> and content = #{content}</if>-->
+<!--            <if test="time != null "> and time = #{time}</if>-->
+<!--            <if test="direction != null "> and direction = #{direction}</if>-->
+<!--        </where>-->
+<!--        ORDER BY time-->
+<!--    </select>-->
+    <select id="selectChatList" parameterType="Chat" resultMap="ChatResult">
+        <include refid="selectChatVo"/>
+        <where>
+            <!-- 【【【 核心修改：双向匹配逻辑 】】】 -->
+            <!-- 只要是 patientId 和 doctorId 参与的对话，无论谁是 patient_id 谁是 doctor_id，都显示 -->
+            <if test="patientId != null and doctorId != null">
+                AND (
+                (patient_id = #{patientId} AND doctor_id = #{doctorId})
+                OR
+                (patient_id = #{doctorId} AND doctor_id = #{patientId})
+                )
+            </if>
+
+            <!-- 如果没有 patientId 或 doctorId，则继续使用原有的单个过滤条件，但通常不应该出现 -->
+            <if test="patientId != null and doctorId == null"> and patient_id = #{patientId}</if>
+            <if test="doctorId != null and patientId == null"> and doctor_id = #{doctorId}</if>
+
+            <!-- ... 移除其他的 like 查询，防止干扰，如果需要可以重新添加 ... -->
+            <!-- 移除下面这些不需要的模糊查询：
+            <if test="patientName != null  and patientName != ''"> and patient_name like concat('%', #{patientName}, '%')</if>
+            <if test="doctorName != null  and doctorName != ''"> and doctor_name like concat('%', #{doctorName}, '%')</if>
+            <if test="content != null  and content != ''"> and content = #{content}</if>
+            -->
+            <if test="time != null "> and time = #{time}</if>
+            <if test="direction != null "> and direction = #{direction}</if>
+        </where>
+        ORDER BY time ASC
+    </select>
+    
+    <select id="selectChatById" parameterType="Long" resultMap="ChatResult">
+        <include refid="selectChatVo"/>
+        where id = #{id}
+        ORDER BY time
+    </select>
+        
+<!--    <insert id="insertChat" parameterType="Chat" useGeneratedKeys="true" keyProperty="id">-->
+<!--        insert into chat-->
+<!--        <trim prefix="(" suffix=")" suffixOverrides=",">-->
+<!--            <if test="patientId != null">patient_id,</if>-->
+<!--            <if test="patientName != null">patient_name,</if>-->
+<!--            <if test="doctorId != null">doctor_id,</if>-->
+<!--            <if test="doctorName != null">doctor_name,</if>-->
+<!--            <if test="content != null">content,</if>-->
+<!--&lt;!&ndash;            <if test="time != null">time,</if>&ndash;&gt;-->
+<!--            <if test="direction != null">direction,</if>-->
+<!--         </trim>-->
+<!--        <trim prefix="values (" suffix=")" suffixOverrides=",">-->
+<!--            <if test="patientId != null">#{patientId},</if>-->
+<!--            <if test="patientName != null">#{patientName},</if>-->
+<!--            <if test="doctorId != null">#{doctorId},</if>-->
+<!--            <if test="doctorName != null">#{doctorName},</if>-->
+<!--            <if test="content != null">#{content},</if>-->
+<!--&lt;!&ndash;            <if test="time != null">#{time},</if>&ndash;&gt;-->
+<!--            <if test="direction != null">#{direction},</if>-->
+<!--         </trim>-->
+<!--    </insert>-->
+    <insert id="insertChat" parameterType="Chat" useGeneratedKeys="true" keyProperty="id">
+        insert into chat
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="patientId != null">patient_id,</if>
+            <if test="patientName != null">patient_name,</if>
+
+            doctor_id, <!-- 【核心修复 1：移除 if 判断】 -->
+
+            <if test="doctorName != null">doctor_name,</if>
+            <if test="content != null">content,</if>
+            <if test="direction != null">direction,</if>
+            <!-- time 字段如果不是数据库自动填充，也应该在这里插入 -->
+            <!-- <if test="time != null">time,</if> -->
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="patientId != null">#{patientId},</if>
+            <if test="patientName != null">#{patientName},</if>
+
+            #{doctorId}, <!-- 【核心修复 2：移除 if 判断】 -->
+
+            <if test="doctorName != null">#{doctorName},</if>
+            <if test="content != null">#{content},</if>
+            <if test="direction != null">#{direction},</if>
+            <!-- <if test="time != null">#{time},</if> -->
+        </trim>
+    </insert>
+
+    <update id="updateChat" parameterType="Chat">
+        update chat
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="patientId != null">patient_id = #{patientId},</if>
+            <if test="patientName != null">patient_name = #{patientName},</if>
+            <if test="doctorId != null">doctor_id = #{doctorId},</if>
+            <if test="doctorName != null">doctor_name = #{doctorName},</if>
+            <if test="content != null">content = #{content},</if>
+            <if test="time != null">time = #{time},</if>
+            <if test="direction != null">direction = #{direction},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteChatById" parameterType="Long">
+        delete from chat where id = #{id}
+    </delete>
+
+    <delete id="deleteChatByIds" parameterType="String">
+        delete from chat where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

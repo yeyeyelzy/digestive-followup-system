@@ -1,0 +1,5 @@
+{
+  "usingComponents": {
+    "heart-3d": "../../components/heart3d/heart3d"
+  }
+}

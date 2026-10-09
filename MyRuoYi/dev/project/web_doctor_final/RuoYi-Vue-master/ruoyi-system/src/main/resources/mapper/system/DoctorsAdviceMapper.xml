@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.DoctorsAdviceMapper">
+    
+    <resultMap type="DoctorsAdvice" id="DoctorsAdviceResult">
+        <result property="doctorsAdviceId"    column="doctors_advice_id"    />
+        <result property="patientName"    column="patient_name"    />
+        <result property="medicationRegimen"    column="medication_regimen"    />
+        <result property="reviewPlan"    column="review_plan"    />
+        <result property="notice"    column="notice"    />
+    </resultMap>
+
+    <sql id="selectDoctorsAdviceVo">
+        select doctors_advice_id, patient_name, medication_regimen, review_plan, notice from doctors_advice
+    </sql>
+
+    <select id="selectDoctorsAdviceList" parameterType="DoctorsAdvice" resultMap="DoctorsAdviceResult">
+        <include refid="selectDoctorsAdviceVo"/>
+        <where>  
+            <if test="patientName != null  and patientName != ''"> and patient_name like concat('%', #{patientName}, '%')</if>
+            <if test="medicationRegimen != null  and medicationRegimen != ''"> and medication_regimen = #{medicationRegimen}</if>
+            <if test="reviewPlan != null  and reviewPlan != ''"> and review_plan = #{reviewPlan}</if>
+            <if test="notice != null  and notice != ''"> and notice = #{notice}</if>
+        </where>
+    </select>
+    
+    <select id="selectDoctorsAdviceByDoctorsAdviceId" parameterType="Long" resultMap="DoctorsAdviceResult">
+        <include refid="selectDoctorsAdviceVo"/>
+        where doctors_advice_id = #{doctorsAdviceId}
+    </select>
+        
+    <insert id="insertDoctorsAdvice" parameterType="DoctorsAdvice" useGeneratedKeys="true" keyProperty="doctorsAdviceId">
+        insert into doctors_advice
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="patientName != null">patient_name,</if>
+            <if test="medicationRegimen != null">medication_regimen,</if>
+            <if test="reviewPlan != null">review_plan,</if>
+            <if test="notice != null">notice,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="patientName != null">#{patientName},</if>
+            <if test="medicationRegimen != null">#{medicationRegimen},</if>
+            <if test="reviewPlan != null">#{reviewPlan},</if>
+            <if test="notice != null">#{notice},</if>
+         </trim>
+    </insert>
+
+    <update id="updateDoctorsAdvice" parameterType="DoctorsAdvice">
+        update doctors_advice
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="patientName != null">patient_name = #{patientName},</if>
+            <if test="medicationRegimen != null">medication_regimen = #{medicationRegimen},</if>
+            <if test="reviewPlan != null">review_plan = #{reviewPlan},</if>
+            <if test="notice != null">notice = #{notice},</if>
+        </trim>
+        where doctors_advice_id = #{doctorsAdviceId}
+    </update>
+
+    <delete id="deleteDoctorsAdviceByDoctorsAdviceId" parameterType="Long">
+        delete from doctors_advice where doctors_advice_id = #{doctorsAdviceId}
+    </delete>
+
+    <delete id="deleteDoctorsAdviceByDoctorsAdviceIds" parameterType="String">
+        delete from doctors_advice where doctors_advice_id in 
+        <foreach item="doctorsAdviceId" collection="array" open="(" separator="," close=")">
+            #{doctorsAdviceId}
+        </foreach>
+    </delete>
+</mapper>

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.DischargeMapper">
+    
+    <resultMap type="Discharge" id="DischargeResult">
+        <result property="admissionNumber"    column="admission_number"    />
+        <result property="patientId"    column="patient_id"    />
+        <result property="patientName"    column="patient_name"    />
+        <result property="admissionDate"    column="admission_date"    />
+        <result property="dischargeDate"    column="discharge_date"    />
+        <result property="dischargeDiagnosis"    column="discharge_diagnosis"    />
+        <result property="majorTestResult"    column="major_test_result"    />
+        <result property="doctorsAdviceId"    column="doctors_advice_id"    />
+    </resultMap>
+
+    <sql id="selectDischargeVo">
+        select admission_number, patient_id, patient_name, admission_date, discharge_date, discharge_diagnosis, major_test_result, doctors_advice_id from discharge
+    </sql>
+
+    <select id="selectDischargeList" parameterType="Discharge" resultMap="DischargeResult">
+        <include refid="selectDischargeVo"/>
+        <where>  
+            <if test="patientId != null "> and patient_id = #{patientId}</if>
+            <if test="patientName != null  and patientName != ''"> and patient_name like concat('%', #{patientName}, '%')</if>
+            <if test="admissionDate != null "> and admission_date = #{admissionDate}</if>
+            <if test="dischargeDate != null "> and discharge_date = #{dischargeDate}</if>
+            <if test="dischargeDiagnosis != null  and dischargeDiagnosis != ''"> and discharge_diagnosis = #{dischargeDiagnosis}</if>
+            <if test="majorTestResult != null  and majorTestResult != ''"> and major_test_result = #{majorTestResult}</if>
+            <if test="doctorsAdviceId != null "> and doctors_advice_id = #{doctorsAdviceId}</if>
+        </where>
+        ORDER BY discharge_date DESC
+    </select>
+    
+    <select id="selectDischargeByAdmissionNumber" parameterType="Integer" resultMap="DischargeResult">
+        <include refid="selectDischargeVo"/>
+        where admission_number = #{admissionNumber}
+        ORDER BY discharge_date DESC
+    </select>
+        
+    <insert id="insertDischarge" parameterType="Discharge" useGeneratedKeys="true" keyProperty="admissionNumber">
+        insert into discharge
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="patientId != null">patient_id,</if>
+            <if test="patientName != null">patient_name,</if>
+            <if test="admissionDate != null">admission_date,</if>
+            <if test="dischargeDate != null">discharge_date,</if>
+            <if test="dischargeDiagnosis != null">discharge_diagnosis,</if>
+            <if test="majorTestResult != null">major_test_result,</if>
+            <if test="doctorsAdviceId != null">doctors_advice_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="patientId != null">#{patientId},</if>
+            <if test="patientName != null">#{patientName},</if>
+            <if test="admissionDate != null">#{admissionDate},</if>
+            <if test="dischargeDate != null">#{dischargeDate},</if>
+            <if test="dischargeDiagnosis != null">#{dischargeDiagnosis},</if>
+            <if test="majorTestResult != null">#{majorTestResult},</if>
+            <if test="doctorsAdviceId != null">#{doctorsAdviceId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateDischarge" parameterType="Discharge">
+        update discharge
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="patientId != null">patient_id = #{patientId},</if>
+            <if test="patientName != null">patient_name = #{patientName},</if>
+            <if test="admissionDate != null">admission_date = #{admissionDate},</if>
+            <if test="dischargeDate != null">discharge_date = #{dischargeDate},</if>
+            <if test="dischargeDiagnosis != null">discharge_diagnosis = #{dischargeDiagnosis},</if>
+            <if test="majorTestResult != null">major_test_result = #{majorTestResult},</if>
+            <if test="doctorsAdviceId != null">doctors_advice_id = #{doctorsAdviceId},</if>
+        </trim>
+        where admission_number = #{admissionNumber}
+    </update>
+
+    <delete id="deleteDischargeByAdmissionNumber" parameterType="Integer">
+        delete from discharge where admission_number = #{admissionNumber}
+    </delete>
+
+    <delete id="deleteDischargeByAdmissionNumbers" parameterType="String">
+        delete from discharge where admission_number in 
+        <foreach item="admissionNumber" collection="array" open="(" separator="," close=")">
+            #{admissionNumber}
+        </foreach>
+    </delete>
+</mapper>

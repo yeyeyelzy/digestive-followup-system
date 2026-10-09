@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.FilesMapper">
+    
+    <resultMap type="Files" id="FilesResult">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+        <result property="type"    column="type"    />
+        <result property="size"    column="size"    />
+        <result property="url"    column="url"    />
+        <result property="md5"    column="md5"    />
+        <result property="isDelete"    column="is_delete"    />
+        <result property="enable"    column="enable"    />
+    </resultMap>
+
+    <sql id="selectFilesVo">
+        select id, name, type, size, url, md5, is_delete, enable from files
+    </sql>
+
+    <select id="selectFilesList" parameterType="Files" resultMap="FilesResult">
+        <include refid="selectFilesVo"/>
+        <where>  
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="type != null  and type != ''"> and type = #{type}</if>
+            <if test="size != null "> and size = #{size}</if>
+            <if test="url != null  and url != ''"> and url = #{url}</if>
+            <if test="md5 != null  and md5 != ''"> and md5 = #{md5}</if>
+            <if test="isDelete != null "> and is_delete = #{isDelete}</if>
+            <if test="enable != null "> and enable = #{enable}</if>
+        </where>
+    </select>
+    
+    <select id="selectFilesById" parameterType="Long" resultMap="FilesResult">
+        <include refid="selectFilesVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertFiles" parameterType="Files" useGeneratedKeys="true" keyProperty="id">
+        insert into files
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null">name,</if>
+            <if test="type != null">type,</if>
+            <if test="size != null">size,</if>
+            <if test="url != null">url,</if>
+            <if test="md5 != null">md5,</if>
+            <if test="isDelete != null">is_delete,</if>
+            <if test="enable != null">enable,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null">#{name},</if>
+            <if test="type != null">#{type},</if>
+            <if test="size != null">#{size},</if>
+            <if test="url != null">#{url},</if>
+            <if test="md5 != null">#{md5},</if>
+            <if test="isDelete != null">#{isDelete},</if>
+            <if test="enable != null">#{enable},</if>
+         </trim>
+    </insert>
+
+    <update id="updateFiles" parameterType="Files">
+        update files
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null">name = #{name},</if>
+            <if test="type != null">type = #{type},</if>
+            <if test="size != null">size = #{size},</if>
+            <if test="url != null">url = #{url},</if>
+            <if test="md5 != null">md5 = #{md5},</if>
+            <if test="isDelete != null">is_delete = #{isDelete},</if>
+            <if test="enable != null">enable = #{enable},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteFilesById" parameterType="Long">
+        delete from files where id = #{id}
+    </delete>
+
+    <delete id="deleteFilesByIds" parameterType="String">
+        delete from files where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

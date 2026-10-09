@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "3D心脏孪生体",
+  "usingComponents": {
+    "heart-3d": "../../components/heart3d/heart3d"
+  }
+}

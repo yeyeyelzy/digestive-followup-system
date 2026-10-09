@@ -1,0 +1,6 @@
+{
+  "usingComponents": {
+    "card2":"/components/card/card2",
+    "remark":"/components/remark/remark"
+  }
+}

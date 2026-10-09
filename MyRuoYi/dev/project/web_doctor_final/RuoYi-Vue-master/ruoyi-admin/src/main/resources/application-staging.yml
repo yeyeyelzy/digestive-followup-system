@@ -1,0 +1,12 @@
+# 准生产环境：使用脱敏数据与受控外部服务。
+logging:
+  level:
+    com.ruoyi: info
+
+swagger:
+  enabled: ${DFS_SWAGGER_ENABLED:${SWAGGER_ENABLED:false}}
+
+spring:
+  devtools:
+    restart:
+      enabled: false

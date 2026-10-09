@@ -1,0 +1,15 @@
+name: Configuration validation
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate development configuration contract
+        shell: pwsh
+        run: ./scripts/validate-config.ps1 -Environment dev -Module all

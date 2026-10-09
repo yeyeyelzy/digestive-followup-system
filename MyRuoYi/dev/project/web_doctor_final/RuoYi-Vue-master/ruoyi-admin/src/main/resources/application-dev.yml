@@ -1,0 +1,7 @@
+# 开发环境覆盖项；连接信息与密钥仍由环境变量提供。
+logging:
+  level:
+    com.ruoyi: debug
+
+swagger:
+  enabled: ${DFS_SWAGGER_ENABLED:${SWAGGER_ENABLED:true}}

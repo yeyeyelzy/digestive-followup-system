@@ -1,0 +1,17 @@
+{
+  "P_001": {
+    "name": "Sample patient 001",
+    "folder": "P_001",
+    "id": "P_001"
+  },
+  "P_002": {
+    "name": "Sample patient 002",
+    "folder": "P_002",
+    "id": "P_002"
+  },
+  "P_003": {
+    "name": "Sample patient 003",
+    "folder": "P_003",
+    "id": "P_003"
+  }
+}

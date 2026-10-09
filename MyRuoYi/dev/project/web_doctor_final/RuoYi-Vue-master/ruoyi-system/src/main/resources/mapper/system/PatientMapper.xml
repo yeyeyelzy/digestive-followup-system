@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.PatientMapper">
+    
+    <resultMap type="Patient" id="PatientResult">
+        <result property="patientId"    column="patient_id"    />
+        <result property="patientName"    column="patient_name"    />
+        <result property="avatarUrl"    column="avatar_url"    />
+        <result property="phoneNumber"    column="phone_number"    />
+        <result property="age"    column="age"    />
+        <result property="gender"    column="gender"    />
+        <result property="weight"    column="weight"    />
+    </resultMap>
+
+    <sql id="selectPatientVo">
+        select patient_id, patient_name, avatar_url, phone_number, age, gender, weight from patient
+    </sql>
+
+    <select id="selectPatientList" parameterType="Patient" resultMap="PatientResult">
+        <include refid="selectPatientVo"/>
+        <where>  
+            <if test="patientName != null  and patientName != ''"> and patient_name like concat('%', #{patientName}, '%')</if>
+            <if test="avatarUrl != null  and avatarUrl != ''"> and avatar_url = #{avatarUrl}</if>
+            <if test="phoneNumber != null  and phoneNumber != ''"> and phone_number = #{phoneNumber}</if>
+            <if test="age != null "> and age = #{age}</if>
+            <if test="gender != null "> and gender = #{gender}</if>
+            <if test="weight != null "> and weight = #{weight}</if>
+        </where>
+    </select>
+    
+    <select id="selectPatientByPatientId" parameterType="Long" resultMap="PatientResult">
+        <include refid="selectPatientVo"/>
+        where patient_id = #{patientId}
+    </select>
+
+    <select id="selectMaxPatientId" resultType="Long">
+        select ifnull(max(patient_id), 0) from patient
+    </select>
+        
+    <insert id="insertPatient" parameterType="Patient" useGeneratedKeys="true" keyProperty="patientId">
+        insert into patient
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="patientId != null">patient_id,</if>
+            <if test="patientName != null and patientName != ''">patient_name,</if>
+            <if test="avatarUrl != null">avatar_url,</if>
+            <if test="phoneNumber != null">phone_number,</if>
+            <if test="age != null">age,</if>
+            <if test="gender != null">gender,</if>
+            <if test="weight != null">weight,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="patientId != null">#{patientId},</if>
+            <if test="patientName != null and patientName != ''">#{patientName},</if>
+            <if test="avatarUrl != null">#{avatarUrl},</if>
+            <if test="phoneNumber != null">#{phoneNumber},</if>
+            <if test="age != null">#{age},</if>
+            <if test="gender != null">#{gender},</if>
+            <if test="weight != null">#{weight},</if>
+         </trim>
+    </insert>
+
+    <update id="updatePatient" parameterType="Patient">
+        update patient
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="patientName != null and patientName != ''">patient_name = #{patientName},</if>
+            <if test="avatarUrl != null">avatar_url = #{avatarUrl},</if>
+            <if test="phoneNumber != null">phone_number = #{phoneNumber},</if>
+            <if test="age != null">age = #{age},</if>
+            <if test="gender != null">gender = #{gender},</if>
+            <if test="weight != null">weight = #{weight},</if>
+        </trim>
+        where patient_id = #{patientId}
+    </update>
+
+    <delete id="deletePatientByPatientId" parameterType="Long">
+        delete from patient where patient_id = #{patientId}
+    </delete>
+
+    <delete id="deletePatientByPatientIds" parameterType="String">
+        delete from patient where patient_id in 
+        <foreach item="patientId" collection="array" open="(" separator="," close=")">
+            #{patientId}
+        </foreach>
+    </delete>
+</mapper>

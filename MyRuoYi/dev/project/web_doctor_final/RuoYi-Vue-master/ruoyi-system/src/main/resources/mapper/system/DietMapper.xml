@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.DietMapper">
+    
+    <resultMap type="Diet" id="DietResult">
+        <result property="dietId"    column="diet_id"    />
+        <result property="patientId"    column="patient_id"    />
+        <result property="patientName"    column="patient_name"    />
+        <result property="date"    column="date"    />
+        <result property="dietDescription"    column="diet_description"    />
+        <result property="dietPictureUrl"    column="diet_picture_url"    />
+        <result property="kcal"    column="kcal"    />
+        <result property="feel"    column="feel"    />
+        <result property="replay"    column="replay"    />
+        <result property="confusion"    column="confusion"    />
+    </resultMap>
+
+    <sql id="selectDietVo">
+        select diet_id, patient_id, patient_name, date, diet_description, diet_picture_url, kcal, feel, replay, confusion from diet
+    </sql>
+
+    <select id="searchByIdDate" parameterType="Diet" resultMap="DietResult">
+        <include refid="selectDietVo"/>
+        <where>  
+            <if test="patientId != null "> and patient_id = #{patientId}</if>
+            <if test="date != null "> and date = #{date}</if>
+        </where>
+        ORDER BY date DESC
+    </select>
+
+    <select id="selectDietList" parameterType="Diet" resultMap="DietResult">
+        <include refid="selectDietVo"/>
+        <where>
+            <if test="patientId != null "> and patient_id = #{patientId}</if>
+            <if test="patientName != null  and patientName != ''"> and patient_name like concat('%', #{patientName}, '%')</if>
+            <if test="date != null "> and date = #{date}</if>
+            <if test="dietDescription != null  and dietDescription != ''"> and diet_description = #{dietDescription}</if>
+            <if test="dietPictureUrl != null  and dietPictureUrl != ''"> and diet_picture_url = #{dietPictureUrl}</if>
+            <if test="kcal != null "> and kcal = #{kcal}</if>
+            <if test="feel != null  and feel != ''"> and feel = #{feel}</if>
+            <if test="replay != null  and replay != ''"> and replay = #{replay}</if>
+            <if test="confusion != null  and confusion != ''"> and confusion = #{confusion}</if>
+        </where>
+        ORDER BY date DESC
+    </select>
+    
+    <select id="selectDietByDietId" parameterType="Long" resultMap="DietResult">
+        <include refid="selectDietVo"/>
+        where diet_id = #{dietId}
+        ORDER BY date DESC
+    </select>
+        
+    <insert id="insertDiet" parameterType="Diet" useGeneratedKeys="true" keyProperty="dietId">
+        insert into diet
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="patientId != null">patient_id,</if>
+            <if test="patientName != null">patient_name,</if>
+            <if test="date != null">date,</if>
+            <if test="dietDescription != null">diet_description,</if>
+            <if test="dietPictureUrl != null">diet_picture_url,</if>
+            <if test="kcal != null">kcal,</if>
+            <if test="feel != null">feel,</if>
+            <if test="replay != null">replay,</if>
+            <if test="confusion != null">confusion,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="patientId != null">#{patientId},</if>
+            <if test="patientName != null">#{patientName},</if>
+            <if test="date != null">#{date},</if>
+            <if test="dietDescription != null">#{dietDescription},</if>
+            <if test="dietPictureUrl != null">#{dietPictureUrl},</if>
+            <if test="kcal != null">#{kcal},</if>
+            <if test="feel != null">#{feel},</if>
+            <if test="replay != null">#{replay},</if>
+            <if test="confusion != null">#{confusion},</if>
+         </trim>
+    </insert>
+
+    <update id="updateDiet" parameterType="Diet">
+        update diet
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="patientId != null">patient_id = #{patientId},</if>
+            <if test="patientName != null">patient_name = #{patientName},</if>
+            <if test="date != null">date = #{date},</if>
+            <if test="dietDescription != null">diet_description = #{dietDescription},</if>
+            <if test="dietPictureUrl != null">diet_picture_url = #{dietPictureUrl},</if>
+            <if test="kcal != null">kcal = #{kcal},</if>
+            <if test="feel != null">feel = #{feel},</if>
+            <if test="replay != null">replay = #{replay},</if>
+            <if test="confusion != null">confusion = #{confusion},</if>
+        </trim>
+        where diet_id = #{dietId}
+    </update>
+
+    <update id="updateIdDate" parameterType="Diet">
+        update diet
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="patientName != null">patient_name = #{patientName},</if>
+            <if test="dietDescription != null">diet_description = #{dietDescription},</if>
+            <if test="dietPictureUrl != null">diet_picture_url = #{dietPictureUrl},</if>
+            <if test="kcal != null">kcal = #{kcal},</if>
+            <if test="feel != null">feel = #{feel},</if>
+            <if test="replay != null">replay = #{replay},</if>
+            <if test="confusion != null">confusion = #{confusion},</if>
+        </trim>
+        where patient_id = #{patientId} and date = #{date}
+    </update>
+
+    <delete id="deleteDietByDietId" parameterType="Long">
+        delete from diet where diet_id = #{dietId}
+    </delete>
+
+    <delete id="deleteDietByDietIds" parameterType="String">
+        delete from diet where diet_id in 
+        <foreach item="dietId" collection="array" open="(" separator="," close=")">
+            #{dietId}
+        </foreach>
+    </delete>
+</mapper>

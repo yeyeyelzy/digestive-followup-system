@@ -1,0 +1,12 @@
+# 自动化测试环境：所有外部服务均由测试运行环境显式注入。
+logging:
+  level:
+    com.ruoyi: info
+
+swagger:
+  enabled: false
+
+spring:
+  devtools:
+    restart:
+      enabled: false

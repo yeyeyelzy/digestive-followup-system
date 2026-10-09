@@ -1,0 +1,12 @@
+# 生产环境覆盖项；敏感配置必须由部署环境注入。
+logging:
+  level:
+    com.ruoyi: info
+
+swagger:
+  enabled: ${DFS_SWAGGER_ENABLED:${SWAGGER_ENABLED:false}}
+
+spring:
+  devtools:
+    restart:
+      enabled: false

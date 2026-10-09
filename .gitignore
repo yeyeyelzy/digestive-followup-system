@@ -1,0 +1,52 @@
+# Secrets and local configuration
+.env
+.env.*
+!.env.example
+!.env.sample
+config/patients.local.json
+
+# Dependencies, environments, and generated output
+node_modules/
+.venv/
+.runtime/
+__pycache__/
+*.py[cod]
+dist/
+build/
+target/
+out/
+coverage/
+
+# IDE settings and runtime artifacts
+.idea/
+.vscode/
+*.log
+*.tmp
+*.bak
+*.db
+*.sqlite
+*.sqlite3
+
+# Large or non-source assets
+*.zip
+*.mp4
+*.mov
+*.avi
+*.mkv
+data/
+raw_data/
+knowledge_base/
+datasets/
+Fitabase Data*/
+results/
+results_*/
+results*/
+optimized_results*/
+server_resource/
+uploadPath/
+var/
+chroma_db/
+
+# Generated front-end environment configuration
+MyRuoYi/dev/project/wx_patient_final/patient/config/environment.local.js
+MyRuoYi/dev/project/wx_patient_final/patient/config/environment.prod.js

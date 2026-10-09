@@ -1,0 +1,78 @@
+{
+  "timestamp": "2026-03-11T13:39:35.028452",
+  "system_metrics": {
+    "start_time": "2026-03-11T13:39:35.027527",
+    "total_tasks": 2,
+    "completed_tasks": 2,
+    "failed_tasks": 0,
+    "rag_queries": 1
+  },
+  "agent_status": {
+    "agent_1": {
+      "status": "idle",
+      "last_updated": "2026-03-11T13:39:35.027755",
+      "capabilities": [
+        "task_distribution",
+        "loop_control"
+      ]
+    },
+    "agent_2": {
+      "status": "busy",
+      "last_updated": "2026-03-11T13:39:35.027758",
+      "capabilities": [
+        "data_analysis",
+        "pattern_recognition"
+      ]
+    }
+  },
+  "recent_tasks": [
+    {
+      "task_id": "task_001",
+      "agent_id": "agent_1",
+      "task_type": "process_user_input",
+      "status": "completed",
+      "timestamp": "2026-03-11T13:39:35.027760",
+      "result": {
+        "result": "处理完成"
+      }
+    },
+    {
+      "task_id": "task_002",
+      "agent_id": "agent_2",
+      "task_type": "analyze_data",
+      "status": "completed",
+      "timestamp": "2026-03-11T13:39:35.027794",
+      "result": {
+        "result": "分析完成"
+      }
+    }
+  ],
+  "recent_rag_interactions": [
+    {
+      "timestamp": "2026-03-11T13:39:35.027826",
+      "query": "心率正常范围",
+      "results_count": 1,
+      "results": [
+        {
+          "content": "正常成年人的静息心率范围为60-100次/分钟"
+        }
+      ]
+    }
+  ],
+  "recent_logs": [
+    {
+      "timestamp": "2026-03-11T13:39:35.027551",
+      "type": "agent_message",
+      "agent_id": "agent_1",
+      "message": "初始化完成",
+      "level": "info"
+    },
+    {
+      "timestamp": "2026-03-11T13:39:35.027685",
+      "type": "agent_message",
+      "agent_id": "agent_2",
+      "message": "准备就绪",
+      "level": "info"
+    }
+  ]
+}

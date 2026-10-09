@@ -1,0 +1,8 @@
+{
+  "usingComponents": {
+    "left":"/components/chat/left",
+    "right":"/components/chat/right"
+  },
+  "enablePullDownRefresh":true
+
+}

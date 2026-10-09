@@ -1,0 +1,8 @@
+{
+  "usingComponents": {
+    "left": "/components/chat/left",
+    "right": "/components/chat/right"
+  },
+  "navigationBarTitleText": "问问医生",
+  "enablePullDownRefresh": true
+}

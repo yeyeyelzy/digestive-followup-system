@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.PatientUserMapper">
+
+    <!-- 结果集映射：将数据库字段映射到 PatientUser 实体类属性 -->
+    <resultMap type="com.ruoyi.common.core.domain.entity.PatientUser" id="PatientUserResult">
+        <id     property="patientId"    column="patient_id"    />
+        <result property="patientName"  column="patient_name"  />
+        <result property="phonenumber"  column="phonenumber"   />
+        <result property="sex"          column="sex"           />
+        <result property="age"          column="age"           />
+        <result property="idCard"       column="id_card"       />
+        <result property="avatar"       column="avatar"        />
+        <result property="password"     column="password"      />
+        <result property="status"       column="status"        />
+        <result property="delFlag"      column="del_flag"      />
+        <result property="loginIp"      column="login_ip"      />
+        <result property="loginDate"    column="login_date"    />
+        <result property="createBy"     column="create_by"     />
+        <result property="createTime"   column="create_time"   />
+        <result property="updateBy"     column="update_by"     />
+        <result property="updateTime"   column="update_time"   />
+        <result property="remark"       column="remark"        />
+    </resultMap>
+
+
+    <!-- 可复用的查询字段列表 -->
+    <!-- 【修正】确保别名为 pu -->
+    <sql id="selectPatientVo">
+        select pu.patient_id, pu.patient_name, pu.phonenumber, pu.sex, pu.age, pu.id_card, pu.avatar, pu.password, pu.status, pu.del_flag, pu.login_ip, pu.login_date, pu.create_by, pu.create_time, pu.update_by, pu.update_time, pu.remark
+        from patient_user pu
+    </sql>
+
+    <!-- 1. 根据条件分页查询病人列表 -->
+    <select id="selectPatientUserList" parameterType="com.ruoyi.common.core.domain.entity.PatientUser" resultMap="PatientUserResult">
+        <include refid="selectPatientVo"/>
+        where p.del_flag = '0'
+        <if test="patientName != null and patientName != ''">
+            AND p.patient_name like concat('%', #{patientName}, '%')
+        </if>
+        <if test="status != null and status != ''">
+            AND p.status = #{status}
+        </if>
+        <if test="phonenumber != null and phonenumber != ''">
+            AND p.phonenumber like concat('%', #{phonenumber}, '%')
+        </if>
+        <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
+            AND date_format(p.create_time,'%y%m%d') &gt;= date_format(#{params.beginTime},'%y%m%d')
+        </if>
+        <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
+            AND date_format(p.create_time,'%y%m%d') &lt;= date_format(#{params.endTime},'%y%m%d')
+        </if>
+    </select>
+
+    <!-- 2. 通过病人账号查询病人信息 -->
+    <select id="selectPatientUserByPatientName" parameterType="String" resultMap="PatientUserResult">
+        <include refid="selectPatientVo"/>
+        WHERE
+        pu.patient_name = #{patientName} AND pu.del_flag = '0'
+    </select>
+
+    <!-- 3. 通过病人ID查询病人信息 -->
+    <select id="selectPatientUserByPatientId" parameterType="Long" resultMap="PatientUserResult">
+        <include refid="selectPatientVo"/>
+        WHERE pu.patient_id = #{patientId}
+    </select>
+
+    <!-- 4. 校验病人账号是否唯一 -->
+    <select id="checkPatientNameUnique" parameterType="String" resultType="int">
+        select count(1) from patient_user where patient_name = #{patientName} and del_flag = '0' limit 1
+    </select>
+
+    <!-- 5. 校验手机号码是否唯一 -->
+    <select id="checkPhoneUnique" parameterType="String" resultMap="PatientUserResult">
+        select patient_id, phonenumber from patient_user where phonenumber = #{phonenumber} and del_flag = '0' limit 1
+    </select>
+
+    <!-- 6. 新增病人信息 -->
+    <insert id="insertPatientUser" parameterType="com.ruoyi.common.core.domain.entity.PatientUser" useGeneratedKeys="true" keyProperty="patientId">
+        insert into patient_user(
+        <if test="patientId != null and patientId != 0">patient_id,</if>
+        <if test="patientName != null and patientName != ''">patient_name,</if>
+        <if test="phonenumber != null and phonenumber != ''">phonenumber,</if>
+        <if test="sex != null and sex != ''">sex,</if>
+        <if test="age != null">age,</if>
+        <if test="idCard != null and idCard != ''">id_card,</if>
+        <if test="avatar != null and avatar != ''">avatar,</if>
+        <if test="password != null and password != ''">password,</if>
+        <if test="status != null and status != ''">status,</if>
+        <if test="createBy != null and createBy != ''">create_by,</if>
+        <if test="remark != null and remark != ''">remark,</if>
+        create_time, update_time
+        )values(
+        <if test="patientId != null and patientId != 0">#{patientId},</if>
+        <if test="patientName != null and patientName != ''">#{patientName},</if>
+        <if test="phonenumber != null and phonenumber != ''">#{phonenumber},</if>
+        <if test="sex != null and sex != ''">#{sex},</if>
+        <if test="age != null">#{age},</if>
+        <if test="idCard != null and idCard != ''">#{idCard},</if>
+        <if test="avatar != null and avatar != ''">#{avatar},</if>
+        <if test="password != null and password != ''">#{password},</if>
+        <if test="status != null and status != ''">#{status},</if>
+        <if test="createBy != null and createBy != ''">#{createBy},</if>
+        <if test="remark != null and remark != ''">#{remark},</if>
+        sysdate(), sysdate()
+        )
+    </insert>
+
+    <!-- 7. 修改病人信息 -->
+    <update id="updatePatientUser" parameterType="com.ruoyi.common.core.domain.entity.PatientUser">
+        update patient_user
+        <set>
+            <if test="patientName != null and patientName != ''">patient_name = #{patientName},</if>
+            <if test="phonenumber != null">phonenumber = #{phonenumber},</if>
+            <if test="sex != null and sex != ''">sex = #{sex},</if>
+            <if test="age != null">age = #{age},</if>
+            <if test="idCard != null">id_card = #{idCard},</if>
+            <if test="avatar != null and avatar != ''">avatar = #{avatar},</if>
+            <if test="password != null and password != ''">password = #{password},</if>
+            <if test="status != null and status != ''">status = #{status},</if>
+            <if test="loginIp != null and loginIp != ''">login_ip = #{loginIp},</if>
+            <if test="loginDate != null">login_date = #{loginDate},</if>
+            <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            update_time = sysdate()
+        </set>
+        where patient_id = #{patientId}
+    </update>
+
+    <update id="updatePatientUserFields" parameterType="PatientUser">
+        update patient_user
+        <trim prefix="SET" suffixOverrides=",">
+            <!-- 仅更新 phonenumber 和 sex -->
+            <if test="phonenumber != null">phonenumber = #{phonenumber},</if>
+            <if test="sex != null">sex = #{sex},</if>
+            <if test="age != null">age = #{age},</if>
+        </trim>
+        where patient_id = #{patientId}
+    </update>
+
+    <!-- 8. 根据病人ID删除病人 (逻辑删除) -->
+    <update id="deletePatientUserById" parameterType="Long">
+        update patient_user set del_flag = '2' where patient_id = #{patientId}
+    </update>
+
+    <!-- 9. 批量删除病人 (逻辑删除) -->
+    <update id="deletePatientUserByIds" parameterType="Long">
+        update patient_user set del_flag = '2' where patient_id in
+        <foreach collection="array" item="patientId" open="(" separator="," close=")">
+            #{patientId}
+        </foreach>
+    </update>
+
+    <select id="selectPatientUserByPhonenumber" parameterType="String" resultMap="PatientUserResult">
+        <include refid="selectPatientVo"/>
+        where pu.phonenumber = #{phonenumber}
+    </select>
+</mapper>
